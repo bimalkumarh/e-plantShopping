@@ -8,6 +8,13 @@ function ProductList() {
   const [showCart, setShowCart] = useState(false);
   const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
   const [addedToCart, setAddedToCart] = useState({});
+
+  const cartItems = useSelector((state) => state.cart.items);
+
+  const getTotalCartItems = () => {
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
+  };
+
   const handleAddToCart = (product) => {
     dispatch(addItem(product));
     setAddedToCart((prevState) => ({
@@ -316,7 +323,7 @@ function ProductList() {
             </a>
           </div>
           <div>
-            {" "}
+            {getTotalCartItems()}
             <a href="#" onClick={(e) => handleCartClick(e)} style={styleA}>
               <h1 className="cart">
                 <svg
@@ -362,10 +369,13 @@ function ProductList() {
                     <div className="product-title">{plant.name}</div>
                     {/*Similarly like the above plant.name show other details like description and cost*/}
                     <button
-                      className="product-button"
+                      className={addedToCart[plant.name] ? "product-button added-to-cart" : "product-button"}
                       onClick={() => handleAddToCart(plant)}
+                      disabled={!!addedToCart[plant.name]}
                     >
-                      Add to Cart
+                      {addedToCart[plant.name]
+                        ? "Added to Cart"
+                        : "Add to Cart"}
                     </button>
                   </div>
                 ))}
